@@ -1,0 +1,132 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id                String      @id @default(uuid())
+  username          String      @unique
+  firstname         String
+  lastname          String
+  email             String      @unique
+  phone             String
+  role              Role
+  status            UserStatus  @default(ACTIVE)  
+  gender            Gender
+  DOB               DateTime?
+  address           String?
+  image             String      @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  Sale Sale[]
+  Order Order[]
+}
+
+enum Role {
+  ADMIN
+  SALESPERSON
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Product {
+  id                String   @id @default(uuid())
+  name              String
+  description       String?
+  alertQty          Int
+  stockQty          Int
+  buyingPrice       Float
+  sellingPrice      Float
+  slug              String   @unique
+  sku               String   @unique
+  supplier_name     String
+  supplier_contact  String
+  categoryId        String
+  image             String   @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  category          Category @relation(fields: [categoryId], references: [id])
+  Item Item[]
+}
+
+model Category {
+  id         String   @id @default(uuid())
+  name       String
+  slug       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  product Product[]
+}
+
+model Sale {
+  id             String    @id @default(uuid())
+  dateOfSale     DateTime
+  totalAmount    Float
+  salesPersonId  String
+  orderId        String   
+  status         SaleStatus
+  paymentMethod  PaymentMethod
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  salesPerson    User      @relation(fields: [salesPersonId], references: [id])
+  order          Order     @relation(fields: [orderId], references: [id])
+}
+
+enum SaleStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+}
+
+model Order {
+  id              String    @id @default(uuid())
+  customerName    String?
+  customerContact String?
+  salesPersonId   String
+  totalPrice      Float
+  status          SaleStatus
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  Sale  Sale[]
+  items Item[]
+
+  salesPerson     User      @relation(fields: [salesPersonId], references: [id])
+}
+
+model Item {
+  id           String  @id @default(uuid())
+  productId    String
+  quantity     Int
+  total_price  Float
+  orderId      String
+
+  order        Order   @relation(fields: [orderId], references: [id])
+  product      Product @relation(fields: [productId], references: [id])
+}
