@@ -15,7 +15,7 @@ model User {
   firstname         String
   lastname          String
   email             String      @unique
-  phone             String
+  phone             String?     @unique
   role              Role
   status            UserStatus  @default(ACTIVE)  
   gender            Gender
@@ -45,30 +45,30 @@ enum UserStatus {
 }
 
 model Product {
-  id                String   @id @default(uuid())
-  name              String
+  id                String    @id @default(uuid())
+  name              String    @unique
   description       String?
   alertQty          Int
   stockQty          Int
   buyingPrice       Float
   sellingPrice      Float
-  slug              String   @unique
-  sku               String   @unique
+  slug              String    @unique
+  sku               String    @unique
   supplier_name     String
   supplier_contact  String
   categoryId        String
-  image             String   @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  image             String    @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  category          Category @relation(fields: [categoryId], references: [id])
+  category          Category  @relation(fields: [categoryId], references: [id])
   Item Item[]
 }
 
 model Category {
   id         String   @id @default(uuid())
-  name       String
-  slug       String
+  name       String   @unique
+  slug       String   @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

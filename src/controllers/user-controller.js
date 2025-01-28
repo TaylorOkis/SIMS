@@ -16,7 +16,39 @@ const createUser = async (req, res) => {
     image,
   } = req.body;
 
-  // TODO: All necessary checks before creating
+  const existingUsername = await db.user.findUnique({
+    where: { username },
+  });
+  if (existingUsername) {
+    res
+      .status(StatusCodes.CONFLICT)
+      .json({ status: "fail", data: null, error: "Username already exists" });
+    return;
+  }
+
+  const existingEmail = await db.user.findUnique({
+    where: { email },
+  });
+  if (existingEmail) {
+    res
+      .status(StatusCodes.CONFLICT)
+      .json({ status: "fail", data: null, error: "Email already in use" });
+    return;
+  }
+
+  if (phone) {
+    const existingPhone = await db.user.findUnique({
+      where: { phone },
+    });
+    if (existingPhone) {
+      res.status(StatusCodes.CONFLICT).json({
+        status: "fail",
+        data: null,
+        error: "Phone number already in use",
+      });
+      return;
+    }
+  }
 
   const user = await db.user.create({
     data: {
@@ -59,15 +91,19 @@ const getAllUsers = async (req, res) => {
 const getSingleUser = async (req, res) => {
   const { id: userId } = req.params;
 
-  const user = await db.user.findUnique({
+  const existingUser = await db.user.findUnique({
     where: { id: userId },
   });
 
-  // TODO: All necessary checks
+  if (!existingUser) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "User not Found" });
+  }
 
   res.status(StatusCodes.OK).json({
     status: "success",
-    data: user,
+    data: existingUser,
     error: null,
   });
 };
@@ -88,7 +124,48 @@ const updateUser = async (req, res) => {
     image,
   } = req.body;
 
-  // TODO: All necessary checks before updating
+  const existingUser = await db.user.findUnique({
+    where: { id: userId },
+  });
+  if (!existingUser) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "User not Found" });
+  }
+
+  const existingUsername = await db.user.findUnique({
+    where: { username },
+  });
+  if (existingUsername) {
+    res
+      .status(StatusCodes.CONFLICT)
+      .json({ status: "fail", data: null, error: "Username already exists" });
+    return;
+  }
+
+  const existingEmail = await db.user.findUnique({
+    where: { email },
+  });
+  if (existingEmail) {
+    res
+      .status(StatusCodes.CONFLICT)
+      .json({ status: "fail", data: null, error: "Email already in use" });
+    return;
+  }
+
+  if (phone) {
+    const existingPhone = await db.user.findUnique({
+      where: { phone },
+    });
+    if (existingPhone) {
+      res.status(StatusCodes.CONFLICT).json({
+        status: "fail",
+        data: null,
+        error: "Phone number already in use",
+      });
+      return;
+    }
+  }
 
   const updateUser = await db.user.update({
     where: { id: userId },
@@ -117,7 +194,15 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   const { id: userId } = req.params;
 
-  // TODO: All necessary checks before deleting
+  const existingUser = await db.user.findUnique({
+    where: { id: userId },
+  });
+  if (!existingUser) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "User not Found" });
+    return;
+  }
 
   await db.user.delete({
     where: { id: userId },
