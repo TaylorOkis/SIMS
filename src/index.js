@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import userRouter from "./routes/user-router.js";
 
 dotenv.config();
 const app = express();
@@ -9,10 +10,12 @@ app.get("/", (req, res) => {
   res.send("App is running perfectly");
 });
 
+app.use("/users", userRouter);
+
 const start = () => {
   try {
     app.listen(PORT, () => {
-      console.log(`App is running on port ${PORT}`);
+      console.log(`App is running on port ${PORT}...`);
     });
   } catch (error) {
     console.log(
