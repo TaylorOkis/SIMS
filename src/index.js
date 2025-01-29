@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRouter from "./routes/user-router.js";
 import categoryRouter from "./routes/category-router.js";
 import productRouter from "./routes/product-router.js";
+import itemRouter from "./routes/item-router.js";
 
 dotenv.config();
 const app = express();
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 app.use("/users", userRouter);
 app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
+app.use("/items", itemRouter);
 
 const start = () => {
   try {
