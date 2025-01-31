@@ -24,6 +24,16 @@ const createItem = async (req, res) => {
     return;
   }
 
+  const existingOrder = await db.order.findUnique({
+    where: { id: orderId },
+  });
+  if (!existingOrder) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "Order not Found" });
+    return;
+  }
+
   const result = await db.$transaction(async (tx) => {
     const unitPrice = purchaseProduct.sellingPrice;
 
@@ -32,9 +42,29 @@ const createItem = async (req, res) => {
     const item = await tx.item.create({
       data: { productId, quantity, total_price: totalPrice, orderId },
     });
+
     await tx.product.update({
       where: { id: productId },
       data: { stockQty: { decrement: quantity } },
+    });
+
+    const existingOrder = await tx.order.findUnique({
+      where: { id: orderId },
+      select: { totalPrice: true },
+    });
+
+    if (!existingOrder) {
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ status: "fail", data: null, error: "Order does not exist" });
+      return;
+    }
+
+    // const newTotalPrice = existingOrder.totalPrice + totalPrice;
+
+    await tx.order.update({
+      where: { id: orderId },
+      data: { totalPrice: { increment: totalPrice } },
     });
 
     return item;
@@ -48,11 +78,7 @@ const createItem = async (req, res) => {
 };
 
 const getAllItems = async (req, res) => {
-  const items = await db.item.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const items = await db.item.findMany({});
 
   res.status(StatusCodes.OK).json({
     status: "success",
@@ -97,7 +123,7 @@ const updateItem = async (req, res) => {
     return;
   }
 
-  const existingProduct = await db.item.findUnique({
+  const existingProduct = await db.product.findUnique({
     where: { id: existingItem.productId },
   });
   if (!existingProduct) {
@@ -118,10 +144,11 @@ const updateItem = async (req, res) => {
     return;
   }
 
-  if (
-    quantity > purchaseProduct.stockQty ||
-    quantity > existingProduct.stockQty
-  ) {
+  const stockQuantity = existingProduct.stockQty + existingItem.stockQty;
+
+  console.log(stockQuantity);
+
+  if (quantity > purchaseProduct.stockQty || quantity > stockQuantity) {
     res.status(StatusCodes.NOT_ACCEPTABLE).json({
       status: "fail",
       data: null,
@@ -130,16 +157,36 @@ const updateItem = async (req, res) => {
     return;
   }
 
+  const existingOrder = await db.order.findUnique({
+    where: { id: orderId },
+  });
+  if (!existingOrder) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "Order not Found" });
+    return;
+  }
+
+  if (
+    quantity === existingItem.quantity &&
+    productId === existingItem.productId
+  ) {
+    res
+      .status(StatusCodes.OK)
+      .json({ status: "success", data: null, error: null });
+    return;
+  }
+
   const result = await db.$transaction(async (tx) => {
     let totalPrice;
+    let newOrderTotalPrice;
 
-    if (
-      quantity !== existingItem.quantity ||
-      productId !== existingItem.productId
-    ) {
-      const unitPrice = purchaseProduct.sellingPrice;
-      totalPrice = unitPrice * quantity;
-    }
+    const unitPrice = purchaseProduct.sellingPrice;
+    totalPrice = unitPrice * quantity;
+    // prettier-ignore
+    newOrderTotalPrice =
+        (existingOrder.totalPrice - existingItem.total_price) + totalPrice;
+    //prettier-ignore-end
 
     const updateItem = await tx.item.update({
       where: { id: itemId },
@@ -151,13 +198,18 @@ const updateItem = async (req, res) => {
       },
     });
 
+    await tx.order.update({
+      where: { id: orderId },
+      data: { totalPrice: newOrderTotalPrice },
+    });
+
     if (
       productId === existingItem.productId &&
       quantity > existingItem.quantity
     ) {
       await tx.product.update({
         where: { id: productId },
-        data: { stockQty: { decrement: quantity } },
+        data: { stockQty: { decrement: quantity - existingItem.quantity } },
       });
     }
 
@@ -167,7 +219,11 @@ const updateItem = async (req, res) => {
     ) {
       await tx.product.update({
         where: { id: productId },
-        data: { stockQty: { increment: existingItem.quantity - quantity } },
+        data: {
+          stockQty: {
+            increment: existingItem.quantity - quantity,
+          },
+        },
       });
     }
 
@@ -205,9 +261,25 @@ const deleteItem = async (req, res) => {
     return;
   }
 
+  const existingOrder = await db.order.findUnique({
+    where: { id: existingItem.orderId },
+  });
+
+  if (!existingOrder) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "Order does not exist" });
+    return;
+  }
+
   await db.$transaction(async (tx) => {
     await tx.item.delete({
       where: { id: itemId },
+    });
+
+    await tx.order.update({
+      where: { id: existingOrder.id },
+      data: { totalPrice: { decrement: existingItem.total_price } },
     });
 
     await tx.product.update({

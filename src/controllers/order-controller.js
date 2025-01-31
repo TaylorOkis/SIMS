@@ -1,22 +1,25 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
+import { v4 as uuidv4 } from "uuid";
 
 const createOrder = async (req, res) => {
   const { customerName, customerContact, salesPersonId, itemIds, status } =
     req.body;
 
-  let totalPrice;
-  for (const itemId in itemIds) {
-    const existingItem = await db.item.findUnique({
-      where: { id: itemId },
-    });
-    if (!existingItem) {
-      res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ status: "fail", data: null, error: "Item not Found" });
-      return;
+  let totalPrice = 0;
+  if (itemIds) {
+    for (const itemId in itemIds) {
+      const existingItem = await db.item.findUnique({
+        where: { id: itemId },
+      });
+      if (!existingItem) {
+        res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ status: "fail", data: null, error: "Item not Found" });
+        return;
+      }
+      totalPrice += existingItem.total_price;
     }
-    totalPrice += existingItem.total_price;
   }
 
   const order = await db.order.create({
@@ -91,19 +94,20 @@ const updateOrder = async (req, res) => {
     return;
   }
 
-  let totalPrice;
-  for (const itemId in itemIds) {
-    const existingItem = await db.item.findUnique({
-      where: { id: itemId },
-    });
-    if (!existingItem) {
-      res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ status: "fail", data: null, error: "Item not Found" });
-      return;
-    }
-    totalPrice += existingItem.total_price;
-  }
+  // THERE MIGHT BE NO NEED FOR THIS
+  // let totalPrice;
+  // for (const itemId in itemIds) {
+  //   const existingItem = await db.item.findUnique({
+  //     where: { id: itemId },
+  //   });
+  //   if (!existingItem) {
+  //     res
+  //       .status(StatusCodes.NOT_FOUND)
+  //       .json({ status: "fail", data: null, error: "Item not Found" });
+  //     return;
+  //   }
+  //   totalPrice += existingItem.total_price;
+  // }
 
   const updateOrder = await db.order.update({
     where: { id: orderId },
@@ -130,6 +134,7 @@ const deleteOrder = async (req, res) => {
 
   const existingOrder = await db.order.findUnique({
     where: { id: orderId },
+    include: { items: true },
   });
   if (!existingOrder) {
     res
@@ -143,6 +148,9 @@ const deleteOrder = async (req, res) => {
       await tx.product.update({
         where: { id: item.productId },
         data: { stockQty: { increment: item.quantity } },
+      });
+      await tx.item.delete({
+        where: { id: item.id },
       });
     }
 
