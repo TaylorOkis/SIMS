@@ -97,6 +97,7 @@ const getSingleProduct = async (req, res) => {
     res
       .status(StatusCodes.NOT_FOUND)
       .json({ status: "fail", data: null, error: "Product not Found" });
+    return;
   }
 
   res.status(StatusCodes.OK).json({
