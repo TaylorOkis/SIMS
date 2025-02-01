@@ -77,7 +77,7 @@ model Category {
 
 model Sale {
   id             String    @id @default(uuid())
-  dateOfSale     DateTime
+  dateOfSale     DateTime  @default(now())
   totalAmount    Float
   salesPersonId  String
   orderId        String   

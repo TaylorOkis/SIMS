@@ -6,6 +6,7 @@ import categoryRouter from "./routes/category-router.js";
 import productRouter from "./routes/product-router.js";
 import itemRouter from "./routes/item-router.js";
 import orderRouter from "./routes/order-router.js";
+import saleRouter from "./routes/sale-router.js";
 
 dotenv.config();
 const app = express();
@@ -23,6 +24,7 @@ app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
 app.use("/items", itemRouter);
 app.use("/orders", orderRouter);
+app.use("/sales", saleRouter);
 
 const start = () => {
   try {
