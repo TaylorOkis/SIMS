@@ -7,6 +7,7 @@ import productRouter from "./routes/product-router.js";
 import itemRouter from "./routes/item-router.js";
 import orderRouter from "./routes/order-router.js";
 import saleRouter from "./routes/sale-router.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser(process.env.JWT_SECRET));
 
 app.get("/", (req, res) => {
   res.send("App is running perfectly");

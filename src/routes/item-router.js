@@ -6,14 +6,18 @@ import {
   getSingleItem,
   updateItem,
 } from "../controllers/item-controller.js";
+import { authenticateUser } from "../middlewares/authentication.js";
 
 const itemRouter = express.Router();
 
-itemRouter.route("/").get(getAllItems).post(createItem);
+itemRouter
+  .route("/")
+  .get(authenticateUser, getAllItems)
+  .post(authenticateUser, createItem);
 itemRouter
   .route("/:id")
-  .get(getSingleItem)
-  .patch(updateItem)
-  .delete(deleteItem);
+  .get(authenticateUser, getSingleItem)
+  .patch(authenticateUser, updateItem)
+  .delete(authenticateUser, deleteItem);
 
 export default itemRouter;

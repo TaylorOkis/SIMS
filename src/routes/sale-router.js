@@ -7,12 +7,17 @@ import {
   deleteSale,
 } from "../controllers/sales-controller.js";
 
+import { authenticateUser } from "../middlewares/authentication.js";
+
 const saleRouter = express.Router();
-saleRouter.route("/").get(getAllSales).post(createSale);
+saleRouter
+  .route("/")
+  .get(authenticateUser, getAllSales)
+  .post(authenticateUser, createSale);
 saleRouter
   .route("/:id")
-  .get(getSingleSale)
-  .patch(updateSale)
-  .delete(deleteSale);
+  .get(authenticateUser, getSingleSale)
+  .patch(authenticateUser, updateSale)
+  .delete(authenticateUser, deleteSale);
 
 export default saleRouter;

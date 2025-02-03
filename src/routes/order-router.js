@@ -4,11 +4,20 @@ import {
   deleteOrder,
   getAllOrders,
   getSingleOrder,
+  updateOrder,
 } from "../controllers/order-controller.js";
+import { authenticateUser } from "../middlewares/authentication.js";
 
 const orderRouter = express.Router();
 
-orderRouter.route("/").post(createOrder).get(getAllOrders);
-orderRouter.route("/:id").get(getSingleOrder).delete(deleteOrder);
+orderRouter
+  .route("/")
+  .post(authenticateUser, createOrder)
+  .get(authenticateUser, getAllOrders);
+orderRouter
+  .route("/:id")
+  .get(authenticateUser, getSingleOrder)
+  .patch(updateOrder)
+  .delete(authenticateUser, deleteOrder);
 
 export default orderRouter;

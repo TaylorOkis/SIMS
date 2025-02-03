@@ -6,14 +6,18 @@ import {
   getSingleUser,
   updateUser,
 } from "../controllers/user-controller.js";
+import { authenticateUser } from "../middlewares/authentication.js";
 
 const userRouter = express.Router();
 
-userRouter.route("/").get(getAllUsers).post(createUser);
+userRouter
+  .route("/")
+  .get(authenticateUser, getAllUsers)
+  .post(authenticateUser, createUser);
 userRouter
   .route("/:id")
-  .get(getSingleUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+  .get(authenticateUser, getSingleUser)
+  .patch(authenticateUser, updateUser)
+  .delete(authenticateUser, deleteUser);
 
 export default userRouter;
