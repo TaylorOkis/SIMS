@@ -25,4 +25,17 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-export { authenticateUser };
+const authorizePermissions = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      res.status(StatusCodes.FORBIDDEN).json({
+        status: "fail",
+        error: "Unauthorized to access this resource",
+      });
+      return;
+    }
+    next();
+  };
+};
+
+export { authenticateUser, authorizePermissions };

@@ -8,6 +8,7 @@ import itemRouter from "./routes/item-router.js";
 import orderRouter from "./routes/order-router.js";
 import saleRouter from "./routes/sale-router.js";
 import cookieParser from "cookie-parser";
+import authRouter from "./routes/auth-router.js";
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
   res.send("App is running perfectly");
 });
 
+app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/categories", categoryRouter);
 app.use("/products", productRouter);

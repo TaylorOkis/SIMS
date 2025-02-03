@@ -7,7 +7,10 @@ import {
   deleteSale,
 } from "../controllers/sales-controller.js";
 
-import { authenticateUser } from "../middlewares/authentication.js";
+import {
+  authenticateUser,
+  authorizePermissions,
+} from "../middlewares/authentication.js";
 
 const saleRouter = express.Router();
 saleRouter
@@ -18,6 +21,6 @@ saleRouter
   .route("/:id")
   .get(authenticateUser, getSingleSale)
   .patch(authenticateUser, updateSale)
-  .delete(authenticateUser, deleteSale);
+  .delete(authenticateUser, authorizePermissions("ADMIN"), deleteSale);
 
 export default saleRouter;

@@ -1,11 +1,13 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
+import bcrypt from "bcryptjs";
 
 const createUser = async (req, res) => {
   const {
     username,
     firstname,
     lastname,
+    password,
     email,
     phone,
     role,
@@ -50,11 +52,14 @@ const createUser = async (req, res) => {
     }
   }
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   const user = await db.user.create({
     data: {
       username,
       firstname,
       lastname,
+      password: hashedPassword,
       email,
       phone,
       role,
@@ -99,6 +104,7 @@ const getSingleUser = async (req, res) => {
     res
       .status(StatusCodes.NOT_FOUND)
       .json({ status: "fail", data: null, error: "User not Found" });
+    return;
   }
 
   res.status(StatusCodes.OK).json({
@@ -131,6 +137,7 @@ const updateUser = async (req, res) => {
     res
       .status(StatusCodes.NOT_FOUND)
       .json({ status: "fail", data: null, error: "User not Found" });
+    return;
   }
 
   const existingUsername = await db.user.findUnique({

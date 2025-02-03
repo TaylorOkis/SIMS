@@ -88,6 +88,7 @@ const updateSale = async (req, res) => {
     .json({ status: "success", data: sale, error: null });
 };
 
+// TODO: Write code for deleting sale (only application for ADMIN)
 const deleteSale = async (req, res) => {};
 
 export { createSale, getAllSales, getSingleSale, updateSale, deleteSale };

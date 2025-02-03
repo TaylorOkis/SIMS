@@ -6,18 +6,21 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controllers/product-controller.js";
-import { authenticateUser } from "../middlewares/authentication.js";
+import {
+  authenticateUser,
+  authorizePermissions,
+} from "../middlewares/authentication.js";
 
 const productRouter = express.Router();
 
 productRouter
   .route("/")
   .get(authenticateUser, getAllProducts)
-  .post(authenticateUser, createProduct);
+  .post(authenticateUser, authorizePermissions("ADMIN"), createProduct);
 productRouter
   .route("/:id")
   .get(authenticateUser, getSingleProduct)
-  .patch(authenticateUser, updateProduct)
-  .delete(authenticateUser, deleteProduct);
+  .patch(authenticateUser, authorizePermissions("ADMIN"), updateProduct)
+  .delete(authenticateUser, authorizePermissions("ADMIN"), deleteProduct);
 
 export default productRouter;

@@ -6,18 +6,21 @@ import {
   getSingleUser,
   updateUser,
 } from "../controllers/user-controller.js";
-import { authenticateUser } from "../middlewares/authentication.js";
+import {
+  authenticateUser,
+  authorizePermissions,
+} from "../middlewares/authentication.js";
 
 const userRouter = express.Router();
 
 userRouter
   .route("/")
-  .get(authenticateUser, getAllUsers)
-  .post(authenticateUser, createUser);
+  .get(authenticateUser, authorizePermissions("ADMIN"), getAllUsers)
+  .post(authenticateUser, authorizePermissions("ADMIN"), createUser);
 userRouter
   .route("/:id")
   .get(authenticateUser, getSingleUser)
-  .patch(authenticateUser, updateUser)
-  .delete(authenticateUser, deleteUser);
+  .patch(authenticateUser, authorizePermissions("ADMIN"), updateUser)
+  .delete(authenticateUser, authorizePermissions("ADMIN"), deleteUser);
 
 export default userRouter;
