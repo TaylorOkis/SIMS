@@ -16,7 +16,7 @@ model User {
   lastname          String
   password          String
   resetToken        String?
-  resetTokenExpiry  String?
+  resetTokenExpiry  DateTime?
   email             String      @unique
   phone             String?     @unique
   role              Role

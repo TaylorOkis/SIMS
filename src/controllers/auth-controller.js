@@ -2,6 +2,8 @@ import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
 import { attachCookiesToResponse } from "../utils/jwt.js";
 import bcrypt from "bcryptjs";
+import sendEmail from "../services/email-service.js";
+import generateEmail from "../utils/email-template.js";
 
 const generateToken = () => {
   const min = 100000;
@@ -66,11 +68,30 @@ const forgotPassword = async (req, res) => {
   const resetToken = generateToken().toString();
   const fifTeenMinutes = 1000 * 60 * 15;
   const resetTokenExpiry = new Date(Date.now() + fifTeenMinutes);
-  const currentTime = new Date(Date.now());
+
+  await db.user.update({
+    where: { email },
+    data: { resetToken, resetTokenExpiry },
+  });
+
+  const emailHtml = generateEmail(resetToken);
+
+  const emailSent = await sendEmail(email, emailHtml);
+
+  console.log(emailSent);
+
+  if (!emailSent) {
+    res.status(StatusCodes.NOT_IMPLEMENTED).json({
+      status: "fail",
+      data: null,
+      error: "Something went wrong",
+    });
+    return;
+  }
 
   res.status(StatusCodes.OK).json({
     status: "success",
-    data: { resetToken, resetTokenExpiry, currentTime },
+    data: `Email sent Successfully to ${email}`,
     error: null,
   });
 };

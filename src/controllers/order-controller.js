@@ -1,6 +1,5 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
-import { v4 as uuidv4 } from "uuid";
 
 const createOrder = async (req, res) => {
   const { customerName, customerContact, salesPersonId, itemIds, status } =
