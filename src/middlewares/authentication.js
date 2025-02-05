@@ -8,6 +8,7 @@ const authenticateUser = async (req, res, next) => {
     res
       .status(StatusCodes.UNAUTHORIZED)
       .json({ status: "fail", error: "Authentication Invalid" });
+    return;
   }
 
   try {

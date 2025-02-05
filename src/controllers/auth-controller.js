@@ -46,11 +46,14 @@ const login = async (req, res) => {
     .status(StatusCodes.OK)
     .json({ status: "success", data: tokenUser, error: null });
 };
+
 const logOut = (req, res) => {
   res.cookie("token", "logout", {
     httpOnly: true,
     expires: new Date(Date.now() + 3 * 1000),
   });
+
+  res.status(StatusCodes.OK).json({ status: "success" });
 };
 
 const forgotPassword = async (req, res) => {
@@ -96,4 +99,49 @@ const forgotPassword = async (req, res) => {
   });
 };
 
-export { login, logOut, forgotPassword };
+const verifyResetToken = async (req, res) => {
+  const { email, resetToken } = req.body;
+
+  const existingUser = await db.user.findUnique({
+    where: { email, resetToken, resetTokenExpiry: { gte: new Date() } },
+  });
+
+  if (!existingUser) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "Invalid User or Token" });
+    return;
+  }
+
+  res.status(StatusCodes.OK).json({ status: "success" });
+};
+
+const changePassword = async (req, res) => {
+  const { newPassword, resetToken, email } = req.body;
+
+  const existingUser = await db.user.findUnique({
+    where: { email, resetToken, resetTokenExpiry: { gte: new Date() } },
+  });
+
+  if (!existingUser) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "Invalid or Expired Token" });
+    return;
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await db.user.update({
+    where: { id: existingUser.id },
+    data: {
+      password: hashedPassword,
+      resetToken: null,
+      resetTokenExpiry: null,
+    },
+  });
+
+  res.status(StatusCodes.OK).json({ status: "success" });
+};
+
+export { login, logOut, forgotPassword, verifyResetToken, changePassword };
