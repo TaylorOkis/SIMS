@@ -5,6 +5,7 @@ import {
   getSingleSale,
   updateSale,
   deleteSale,
+  getAllSalesPersonSales,
 } from "../controllers/sales-controller.js";
 
 import {
@@ -13,9 +14,13 @@ import {
 } from "../middlewares/authentication.js";
 
 const saleRouter = express.Router();
+
+saleRouter
+  .route("/salesPersonSales/:id")
+  .get(authenticateUser, getAllSalesPersonSales);
 saleRouter
   .route("/")
-  .get(authenticateUser, getAllSales)
+  .get(authenticateUser, authorizePermissions("ADMIN"), getAllSales)
   .post(authenticateUser, createSale);
 saleRouter
   .route("/:id")

@@ -56,6 +56,33 @@ const getAllOrders = async (req, res) => {
   });
 };
 
+const getAllSalesPersonOrders = async (req, res) => {
+  const { id: salesPersonId } = req.params;
+
+  const existingUser = await db.user.findUnique({
+    where: { id: salesPersonId },
+  });
+  if (!existingUser) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "User not Found" });
+    return;
+  }
+
+  const orders = await db.order.findMany({
+    where: { salesPersonId },
+    orderBy: { createdAt: "desc" },
+    include: { items: true },
+  });
+
+  res.status(StatusCodes.OK).json({
+    status: "success",
+    count: orders.length,
+    data: orders,
+    error: null,
+  });
+};
+
 const getSingleOrder = async (req, res) => {
   const { id: orderId } = req.params;
 
@@ -163,4 +190,11 @@ const deleteOrder = async (req, res) => {
   });
 };
 
-export { getAllOrders, createOrder, getSingleOrder, updateOrder, deleteOrder };
+export {
+  getAllOrders,
+  createOrder,
+  getSingleOrder,
+  updateOrder,
+  deleteOrder,
+  getAllSalesPersonOrders,
+};

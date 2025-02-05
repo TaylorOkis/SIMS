@@ -5,6 +5,7 @@ import {
   getAllUsers,
   getSingleUser,
   updateUser,
+  updateUserPassword,
 } from "../controllers/user-controller.js";
 import {
   authenticateUser,
@@ -12,6 +13,10 @@ import {
 } from "../middlewares/authentication.js";
 
 const userRouter = express.Router();
+
+userRouter
+  .route("/updatePassword/:id")
+  .patch(authenticateUser, updateUserPassword);
 
 userRouter
   .route("/")

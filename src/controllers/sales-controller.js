@@ -43,6 +43,32 @@ const getAllSales = async (req, res) => {
     .json({ status: "success", count: sales.length, data: sales, error: null });
 };
 
+const getAllSalesPersonSales = async (req, res) => {
+  const { id: salesPersonId } = req.params;
+
+  const existingUser = await db.user.findUnique({
+    where: { id: salesPersonId },
+  });
+  if (!existingUser) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "User not Found" });
+    return;
+  }
+
+  const sales = await db.sale.findMany({
+    where: { salesPersonId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  res.status(StatusCodes.OK).json({
+    status: "success",
+    count: sales.length,
+    data: sales,
+    error: null,
+  });
+};
+
 const getSingleSale = async (req, res) => {
   const { id: saleId } = req.params;
   const sale = await db.sale.findUnique({
@@ -91,4 +117,11 @@ const updateSale = async (req, res) => {
 // TODO: Write code for deleting sale (only application for ADMIN)
 const deleteSale = async (req, res) => {};
 
-export { createSale, getAllSales, getSingleSale, updateSale, deleteSale };
+export {
+  createSale,
+  getAllSales,
+  getSingleSale,
+  updateSale,
+  deleteSale,
+  getAllSalesPersonSales,
+};

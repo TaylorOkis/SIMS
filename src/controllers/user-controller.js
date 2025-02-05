@@ -220,4 +220,46 @@ const deleteUser = async (req, res) => {
   });
 };
 
-export { getAllUsers, createUser, getSingleUser, updateUser, deleteUser };
+const updateUserPassword = async (req, res) => {
+  const { id: userId } = req.params;
+  const { oldPassword, newPassword } = req.body;
+
+  const existingUser = await db.user.findUnique({
+    where: { id: userId },
+  });
+  if (!existingUser) {
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ status: "fail", data: null, error: "User not Found" });
+    return;
+  }
+
+  const passwordMatch = await bcrypt.compare(
+    oldPassword,
+    existingUser.password
+  );
+  if (!passwordMatch) {
+    res
+      .status(StatusCodes.NOT_ACCEPTABLE)
+      .json({ status: "fail", data: null, error: "Invalid Old Password" });
+    return;
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await db.user.update({
+    where: { id: userId },
+    data: { password: hashedPassword },
+  });
+
+  res.status(StatusCodes.OK).json({ status: "success" });
+};
+
+export {
+  getAllUsers,
+  createUser,
+  getSingleUser,
+  updateUser,
+  deleteUser,
+  updateUserPassword,
+};
