@@ -1,9 +1,15 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
-import { attachCookiesToResponse } from "../utils/jwt.js";
 import bcrypt from "bcryptjs";
+
+import { attachCookiesToResponse } from "../utils/jwt.js";
 import sendEmail from "../services/email-service.js";
 import generateEmail from "../utils/email-template.js";
+import {
+  NotFoundError,
+  UnauthenticatedError,
+  NotImplementedError,
+} from "../utils/errors/index.js";
 
 const generateToken = () => {
   const min = 100000;
@@ -25,18 +31,12 @@ const login = async (req, res) => {
   }
 
   if (!existingUser) {
-    res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ status: "fail", data: null, error: errorMessage });
-    return;
+    throw new UnauthenticatedError(errorMessage);
   }
 
   const passwordMatch = await bcrypt.compare(password, existingUser.password);
   if (!passwordMatch) {
-    res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ status: "fail", data: null, error: errorMessage });
-    return;
+    throw new UnauthenticatedError(errorMessage);
   }
 
   const { password: savedPassword, ...tokenUser } = existingUser;
@@ -62,10 +62,7 @@ const forgotPassword = async (req, res) => {
     where: { email },
   });
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "User Not Found" });
-    return;
+    throw new NotFoundError("User not Found");
   }
 
   const resetToken = generateToken().toString();
@@ -84,12 +81,7 @@ const forgotPassword = async (req, res) => {
   console.log(emailSent);
 
   if (!emailSent) {
-    res.status(StatusCodes.NOT_IMPLEMENTED).json({
-      status: "fail",
-      data: null,
-      error: "Something went wrong",
-    });
-    return;
+    throw new NotImplementedError("Email not sent, an error occurred");
   }
 
   res.status(StatusCodes.OK).json({
@@ -107,10 +99,7 @@ const verifyResetToken = async (req, res) => {
   });
 
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Invalid User or Token" });
-    return;
+    throw new NotFoundError("Invalid User or Token");
   }
 
   res.status(StatusCodes.OK).json({ status: "success" });
@@ -124,10 +113,7 @@ const changePassword = async (req, res) => {
   });
 
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Invalid or Expired Token" });
-    return;
+    throw new NotFoundError("Invalid or Expired Token");
   }
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);

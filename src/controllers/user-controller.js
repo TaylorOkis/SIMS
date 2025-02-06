@@ -1,6 +1,8 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcryptjs";
+import BadRequestError from "../utils/errors/bad-request.js";
+import NotFoundError from "../utils/errors/not-found.js";
 
 const createUser = async (req, res) => {
   const {
@@ -22,20 +24,14 @@ const createUser = async (req, res) => {
     where: { username },
   });
   if (existingUsername) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Username already exists" });
-    return;
+    throw new BadRequestError("Username already exists");
   }
 
   const existingEmail = await db.user.findUnique({
     where: { email },
   });
   if (existingEmail) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Email already in use" });
-    return;
+    throw new BadRequestError("Email already in use");
   }
 
   if (phone) {
@@ -43,12 +39,7 @@ const createUser = async (req, res) => {
       where: { phone },
     });
     if (existingPhone) {
-      res.status(StatusCodes.CONFLICT).json({
-        status: "fail",
-        data: null,
-        error: "Phone number already in use",
-      });
-      return;
+      throw new BadRequestError("Phone number already in use");
     }
   }
 
@@ -101,10 +92,7 @@ const getSingleUser = async (req, res) => {
   });
 
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "User not Found" });
-    return;
+    throw new NotFoundError("User not Found");
   }
 
   res.status(StatusCodes.OK).json({
@@ -134,30 +122,21 @@ const updateUser = async (req, res) => {
     where: { id: userId },
   });
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "User not Found" });
-    return;
+    throw new NotFoundError("User not Found");
   }
 
   const existingUsername = await db.user.findUnique({
     where: { username },
   });
   if (existingUsername) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Username already exists" });
-    return;
+    throw new BadRequestError("Username already exists");
   }
 
   const existingEmail = await db.user.findUnique({
     where: { email },
   });
   if (existingEmail) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Email already in use" });
-    return;
+    throw new BadRequestError("Email already in use");
   }
 
   if (phone) {
@@ -165,12 +144,7 @@ const updateUser = async (req, res) => {
       where: { phone },
     });
     if (existingPhone) {
-      res.status(StatusCodes.CONFLICT).json({
-        status: "fail",
-        data: null,
-        error: "Phone number already in use",
-      });
-      return;
+      throw new BadRequestError("Phone number already in use");
     }
   }
 
@@ -205,10 +179,7 @@ const deleteUser = async (req, res) => {
     where: { id: userId },
   });
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "User not Found" });
-    return;
+    throw new NotFoundError("User not Found");
   }
 
   await db.user.delete({
@@ -228,10 +199,7 @@ const updateUserPassword = async (req, res) => {
     where: { id: userId },
   });
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "User not Found" });
-    return;
+    throw new NotFoundError("User not Found");
   }
 
   const passwordMatch = await bcrypt.compare(
@@ -239,10 +207,7 @@ const updateUserPassword = async (req, res) => {
     existingUser.password
   );
   if (!passwordMatch) {
-    res
-      .status(StatusCodes.NOT_ACCEPTABLE)
-      .json({ status: "fail", data: null, error: "Invalid Old Password" });
-    return;
+    throw new BadRequestError("Invalid Old Password");
   }
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);

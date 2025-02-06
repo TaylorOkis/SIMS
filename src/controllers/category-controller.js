@@ -1,5 +1,7 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
+import BadRequestError from "../utils/errors/bad-request.js";
+import NotFoundError from "../utils/errors/not-found.js";
 
 const createCategory = async (req, res) => {
   const { name, slug } = req.body;
@@ -8,20 +10,14 @@ const createCategory = async (req, res) => {
     where: { name },
   });
   if (existingName) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Category already exists" });
-    return;
+    throw new BadRequestError("Category already exists");
   }
 
   const existingSlug = await db.category.findUnique({
     where: { slug },
   });
   if (existingSlug) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Slug already in use" });
-    return;
+    throw new BadRequestError("Slug already in use");
   }
 
   const category = await db.category.create({
@@ -58,10 +54,7 @@ const getSingleCategory = async (req, res) => {
   });
 
   if (!existingCategory) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Category not Found" });
-    return;
+    throw new NotFoundError("Category not Found");
   }
 
   res.status(StatusCodes.OK).json({
@@ -79,30 +72,21 @@ const updateCategory = async (req, res) => {
     where: { id: categoryId },
   });
   if (!existingCategory) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Category not Found" });
-    return;
+    throw new NotFoundError("Category not Found");
   }
 
   const existingName = await db.category.findUnique({
     where: { name },
   });
   if (existingName) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Name already in use" });
-    return;
+    throw new BadRequestError("Name already in use");
   }
 
   const existingSlug = await db.category.findUnique({
     where: { slug },
   });
   if (existingSlug) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Slug already in use" });
-    return;
+    throw new BadRequestError("Slug already in use");
   }
 
   const updateCategory = await db.category.update({
@@ -124,9 +108,7 @@ const deleteCategory = async (req, res) => {
     where: { id: categoryId },
   });
   if (!existingCategory) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Category not Found" });
+    throw new NotFoundError("Category not Found");
   }
 
   await db.category.delete({

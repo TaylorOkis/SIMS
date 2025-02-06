@@ -1,5 +1,7 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
+import NotFoundError from "../utils/errors/not-found.js";
+import BadRequestError from "../utils/errors/bad-request.js";
 
 const createItem = async (req, res) => {
   const { productId, quantity, orderId } = req.body;
@@ -9,29 +11,18 @@ const createItem = async (req, res) => {
   });
 
   if (!purchaseProduct) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Product does not exist" });
-    return;
+    throw new NotFoundError("Product does not exist");
   }
 
   if (quantity > purchaseProduct.stockQty) {
-    res.status(StatusCodes.NOT_ACCEPTABLE).json({
-      status: "fail",
-      data: null,
-      error: "Quantity is greater than what is in stock",
-    });
-    return;
+    throw new BadRequestError("Quantity is greater than what is in stock");
   }
 
   const existingOrder = await db.order.findUnique({
     where: { id: orderId },
   });
   if (!existingOrder) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Order not Found" });
-    return;
+    throw new NotFoundError("Order not Found");
   }
 
   const result = await db.$transaction(async (tx) => {
@@ -117,31 +108,21 @@ const updateItem = async (req, res) => {
     where: { id: itemId },
   });
   if (!existingItem) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Item not Found" });
-    return;
+    throw new NotFoundError("Item not Found");
   }
 
   const existingProduct = await db.product.findUnique({
     where: { id: existingItem.productId },
   });
   if (!existingProduct) {
-    res.status(StatusCodes.NOT_FOUND).json({
-      status: "fail",
-      data: null,
-      error: "Current Item product not found",
-    });
+    throw new NotFoundError("Current Item product not found");
   }
 
   const purchaseProduct = await db.product.findUnique({
     where: { id: productId },
   });
   if (!purchaseProduct) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Product does not exist" });
-    return;
+    throw new NotFoundError("Product does not exist");
   }
 
   const stockQuantity = existingProduct.stockQty + existingItem.stockQty;
@@ -149,22 +130,14 @@ const updateItem = async (req, res) => {
   console.log(stockQuantity);
 
   if (quantity > purchaseProduct.stockQty || quantity > stockQuantity) {
-    res.status(StatusCodes.NOT_ACCEPTABLE).json({
-      status: "fail",
-      data: null,
-      error: "Quantity is greater than what is in stock",
-    });
-    return;
+    throw new BadRequestError("Quantity is greater than what is in stock");
   }
 
   const existingOrder = await db.order.findUnique({
     where: { id: orderId },
   });
   if (!existingOrder) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Order not Found" });
-    return;
+    throw new NotFoundError("Order not Found");
   }
 
   if (
@@ -255,10 +228,7 @@ const deleteItem = async (req, res) => {
     where: { id: itemId },
   });
   if (!existingItem) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Item not Found" });
-    return;
+    throw new NotFoundError("Item not Found");
   }
 
   const existingOrder = await db.order.findUnique({
@@ -266,10 +236,7 @@ const deleteItem = async (req, res) => {
   });
 
   if (!existingOrder) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Order does not exist" });
-    return;
+    throw new NotFoundError("Order does not exist");
   }
 
   await db.$transaction(async (tx) => {

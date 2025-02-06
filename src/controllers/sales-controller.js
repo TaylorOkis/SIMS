@@ -1,5 +1,6 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
+import NotFoundError from "../utils/errors/not-found.js";
 
 const createSale = async (req, res) => {
   const { dateOfSale, orderId, status, paymentMethod } = req.body;
@@ -8,10 +9,7 @@ const createSale = async (req, res) => {
     where: { id: orderId },
   });
   if (!existingOrder) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Order not found" });
-    return;
+    throw new NotFoundError("Order not found");
   }
 
   const salesPersonId = existingOrder.salesPersonId;
@@ -50,10 +48,7 @@ const getAllSalesPersonSales = async (req, res) => {
     where: { id: salesPersonId },
   });
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "User not Found" });
-    return;
+    throw new NotFoundError("User not Found");
   }
 
   const sales = await db.sale.findMany({
@@ -71,9 +66,13 @@ const getAllSalesPersonSales = async (req, res) => {
 
 const getSingleSale = async (req, res) => {
   const { id: saleId } = req.params;
-  const sale = await db.sale.findUnique({
+  const existingSale = await db.sale.findUnique({
     where: { id: saleId },
   });
+
+  if (!existingSale) {
+    throw new NotFoundError("Sale not found");
+  }
 
   res
     .status(StatusCodes.OK)
@@ -88,10 +87,7 @@ const updateSale = async (req, res) => {
     where: { id: orderId },
   });
   if (!existingOrder) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Order not found" });
-    return;
+    throw new NotFoundError("Order not found");
   }
 
   const salesPersonId = existingOrder.salesPersonId;

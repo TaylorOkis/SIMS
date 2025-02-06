@@ -1,5 +1,6 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
+import { NotFoundError } from "../utils/errors/index.js";
 
 const createOrder = async (req, res) => {
   const { customerName, customerContact, salesPersonId, itemIds, status } =
@@ -12,10 +13,7 @@ const createOrder = async (req, res) => {
         where: { id: itemId },
       });
       if (!existingItem) {
-        res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ status: "fail", data: null, error: "Item not Found" });
-        return;
+        throw new NotFoundError("Item not Found");
       }
       totalPrice += existingItem.total_price;
     }
@@ -63,10 +61,7 @@ const getAllSalesPersonOrders = async (req, res) => {
     where: { id: salesPersonId },
   });
   if (!existingUser) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "User not Found" });
-    return;
+    throw new NotFoundError("User not Found");
   }
 
   const orders = await db.order.findMany({
@@ -92,10 +87,7 @@ const getSingleOrder = async (req, res) => {
   });
 
   if (!existingOrder) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Order not Found" });
-    return;
+    throw new NotFoundError("Order not Found");
   }
 
   res.status(StatusCodes.OK).json({
@@ -114,10 +106,7 @@ const updateOrder = async (req, res) => {
     where: { id: orderId },
   });
   if (!existingOrder) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Order not Found" });
-    return;
+    throw new NotFoundError("Order not Found");
   }
 
   // THERE MIGHT BE NO NEED FOR THIS
@@ -163,10 +152,7 @@ const deleteOrder = async (req, res) => {
     include: { items: true },
   });
   if (!existingOrder) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Order not Found" });
-    return;
+    throw new NotFoundError("Order not Found");
   }
 
   await db.$transaction(async (tx) => {

@@ -1,5 +1,7 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
+import BadRequestError from "../utils/errors/bad-request.js";
+import NotFoundError from "../utils/errors/not-found.js";
 
 const createProduct = async (req, res) => {
   const {
@@ -20,32 +22,21 @@ const createProduct = async (req, res) => {
     where: { name },
   });
   if (existingName) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Product already exists" });
-    return;
+    throw new BadRequestError("Product already exists");
   }
 
   const existingSlug = await db.product.findUnique({
     where: { slug },
   });
   if (existingSlug) {
-    res
-      .status(StatusCodes.CONFLICT)
-      .json({ status: "fail", data: null, error: "Slug already in use" });
-    return;
+    throw new BadRequestError("Slug already in use");
   }
 
   const existingSku = await db.product.findUnique({
     where: { sku },
   });
   if (existingSku) {
-    res.status(StatusCodes.CONFLICT).json({
-      status: "fail",
-      data: null,
-      error: "Sku already in use",
-    });
-    return;
+    throw new BadRequestError("Sku already in use");
   }
 
   const product = await db.product.create({
@@ -94,10 +85,7 @@ const getSingleProduct = async (req, res) => {
   });
 
   if (!existingProduct) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Product not Found" });
-    return;
+    throw new NotFoundError("Product not Found");
   }
 
   res.status(StatusCodes.OK).json({
@@ -127,10 +115,7 @@ const updateProduct = async (req, res) => {
     where: { id: productId },
   });
   if (!existingProduct) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Product not Found" });
-    return;
+    throw new NotFoundError("Product not Found");
   }
 
   if (name !== existingProduct.name) {
@@ -138,10 +123,7 @@ const updateProduct = async (req, res) => {
       where: { name },
     });
     if (existingName) {
-      res
-        .status(StatusCodes.CONFLICT)
-        .json({ status: "fail", data: null, error: "Product already exists" });
-      return;
+      throw new BadRequestError("Product already exists");
     }
   }
 
@@ -150,10 +132,7 @@ const updateProduct = async (req, res) => {
       where: { slug },
     });
     if (existingSlug) {
-      res
-        .status(StatusCodes.CONFLICT)
-        .json({ status: "fail", data: null, error: "Slug already in use" });
-      return;
+      throw new BadRequestError("Slug already in use");
     }
   }
 
@@ -162,12 +141,7 @@ const updateProduct = async (req, res) => {
       where: { sku },
     });
     if (existingSku) {
-      res.status(StatusCodes.CONFLICT).json({
-        status: "fail",
-        data: null,
-        error: "Sku already in use",
-      });
-      return;
+      throw new BadRequestError("Sku already in use");
     }
   }
 
@@ -202,10 +176,7 @@ const deleteProduct = async (req, res) => {
     where: { id: productId },
   });
   if (!existingProduct) {
-    res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ status: "fail", data: null, error: "Product not Found" });
-    return;
+    throw new NotFoundError("Product not Found");
   }
 
   await db.product.delete({
