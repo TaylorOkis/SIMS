@@ -1,14 +1,14 @@
-import { StatusCodes } from "http-status-codes";
 import { verifyToken } from "../utils/jwt.js";
+import {
+  UnauthorizedError,
+  UnauthenticatedError,
+} from "../utils/errors/index.js";
 
 const authenticateUser = async (req, res, next) => {
   const token = req.signedCookies.token;
 
   if (!token) {
-    res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ status: "fail", error: "Authentication Invalid" });
-    return;
+    throw new UnauthenticatedError("Authentication Invalid");
   }
 
   try {
@@ -20,20 +20,14 @@ const authenticateUser = async (req, res, next) => {
     };
     next();
   } catch (error) {
-    res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ status: "fail", error: "Authentication Invalid" });
+    throw new UnauthenticatedError("Authentication Invalid");
   }
 };
 
 const authorizePermissions = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      res.status(StatusCodes.FORBIDDEN).json({
-        status: "fail",
-        error: "Unauthorized to access this resource",
-      });
-      return;
+      throw new UnauthorizedError("Unauthorized to access this resource");
     }
     next();
   };
