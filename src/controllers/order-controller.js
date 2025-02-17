@@ -40,6 +40,8 @@ const createOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   const orders = await db.order.findMany({
+    take: Number(req.query.limit),
+    skip: paginate(req.query.page, req.query.limit),
     orderBy: {
       createdAt: "desc",
     },

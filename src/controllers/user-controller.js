@@ -71,6 +71,8 @@ const createUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   const users = await db.user.findMany({
+    take: Number(req.query.limit),
+    skip: paginate(req.query.page, req.query.limit),
     orderBy: {
       createdAt: "desc",
     },

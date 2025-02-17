@@ -2,6 +2,7 @@ import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../utils/errors/bad-request.js";
 import NotFoundError from "../utils/errors/not-found.js";
+import paginate from "../utils/pagination.js";
 
 const createProduct = async (req, res) => {
   const {
@@ -64,6 +65,8 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   const products = await db.product.findMany({
+    take: Number(req.query.limit),
+    skip: paginate(req.query.page, req.query.limit),
     orderBy: {
       createdAt: "desc",
     },

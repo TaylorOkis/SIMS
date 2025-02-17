@@ -51,8 +51,6 @@ const createItem = async (req, res) => {
       return;
     }
 
-    // const newTotalPrice = existingOrder.totalPrice + totalPrice;
-
     await tx.order.update({
       where: { id: orderId },
       data: { totalPrice: { increment: totalPrice } },
@@ -69,7 +67,13 @@ const createItem = async (req, res) => {
 };
 
 const getAllItems = async (req, res) => {
-  const items = await db.item.findMany({});
+  const items = await db.item.findMany({
+    take: Number(req.query.limit),
+    skip: paginate(req.query.page, req.query.limit),
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
   res.status(StatusCodes.OK).json({
     status: "success",

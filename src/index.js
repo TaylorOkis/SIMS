@@ -32,12 +32,6 @@ const limiter = rateLimit({
 });
 
 app.use(express.json());
-app.use((req, res, next) => {
-  req.body = xss(req.body);
-  req.query = xss(req.query);
-  req.params = xss(req.params);
-  next();
-});
 app.use(helmet());
 app.use(limiter);
 app.use(cors());
