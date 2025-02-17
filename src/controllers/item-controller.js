@@ -2,6 +2,7 @@ import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
 import NotFoundError from "../utils/errors/not-found.js";
 import BadRequestError from "../utils/errors/bad-request.js";
+import paginate from "../utils/pagination.js";
 
 const createItem = async (req, res) => {
   const { productId, quantity, orderId } = req.body;
@@ -70,9 +71,6 @@ const getAllItems = async (req, res) => {
   const items = await db.item.findMany({
     take: Number(req.query.limit),
     skip: paginate(req.query.page, req.query.limit),
-    orderBy: {
-      createdAt: "desc",
-    },
   });
 
   res.status(StatusCodes.OK).json({

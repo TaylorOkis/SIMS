@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcryptjs";
 import BadRequestError from "../utils/errors/bad-request.js";
 import NotFoundError from "../utils/errors/not-found.js";
+import paginate from "../utils/pagination.js";
 
 const createUser = async (req, res) => {
   const {

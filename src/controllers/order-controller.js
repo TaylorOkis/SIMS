@@ -1,6 +1,7 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
 import { NotFoundError } from "../utils/errors/index.js";
+import paginate from "../utils/pagination.js";
 
 const createOrder = async (req, res) => {
   const { customerName, customerContact, salesPersonId, itemIds, status } =
