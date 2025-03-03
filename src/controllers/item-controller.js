@@ -9,6 +9,7 @@ const createItem = async (req, res) => {
 
   const purchaseProduct = await db.product.findUnique({
     where: { id: productId },
+    select: { stockQty: true, sellingPrice: true },
   });
 
   if (!purchaseProduct) {
@@ -17,13 +18,6 @@ const createItem = async (req, res) => {
 
   if (quantity > purchaseProduct.stockQty) {
     throw new BadRequestError("Quantity is greater than what is in stock");
-  }
-
-  const existingOrder = await db.order.findUnique({
-    where: { id: orderId },
-  });
-  if (!existingOrder) {
-    throw new NotFoundError("Order not Found");
   }
 
   const result = await db.$transaction(async (tx) => {
@@ -42,7 +36,7 @@ const createItem = async (req, res) => {
 
     const existingOrder = await tx.order.findUnique({
       where: { id: orderId },
-      select: { totalPrice: true },
+      select: { id: true },
     });
 
     if (!existingOrder) {
@@ -129,14 +123,13 @@ const updateItem = async (req, res) => {
 
   const stockQuantity = existingProduct.stockQty + existingItem.stockQty;
 
-  console.log(stockQuantity);
-
   if (quantity > purchaseProduct.stockQty || quantity > stockQuantity) {
     throw new BadRequestError("Quantity is greater than what is in stock");
   }
 
   const existingOrder = await db.order.findUnique({
     where: { id: orderId },
+    select: { totalPrice: true },
   });
   if (!existingOrder) {
     throw new NotFoundError("Order not Found");
@@ -235,6 +228,7 @@ const deleteItem = async (req, res) => {
 
   const existingOrder = await db.order.findUnique({
     where: { id: existingItem.orderId },
+    select: { id: true },
   });
 
   if (!existingOrder) {

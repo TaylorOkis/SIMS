@@ -62,6 +62,7 @@ const getAllSalesPersonOrders = async (req, res) => {
 
   const existingUser = await db.user.findUnique({
     where: { id: salesPersonId },
+    select: { id: true },
   });
   if (!existingUser) {
     throw new NotFoundError("User not Found");
@@ -107,25 +108,11 @@ const updateOrder = async (req, res) => {
 
   const existingOrder = await db.order.findUnique({
     where: { id: orderId },
+    select: { id: true },
   });
   if (!existingOrder) {
     throw new NotFoundError("Order not Found");
   }
-
-  // THERE MIGHT BE NO NEED FOR THIS
-  // let totalPrice;
-  // for (const itemId in itemIds) {
-  //   const existingItem = await db.item.findUnique({
-  //     where: { id: itemId },
-  //   });
-  //   if (!existingItem) {
-  //     res
-  //       .status(StatusCodes.NOT_FOUND)
-  //       .json({ status: "fail", data: null, error: "Item not Found" });
-  //     return;
-  //   }
-  //   totalPrice += existingItem.total_price;
-  // }
 
   const updateOrder = await db.order.update({
     where: { id: orderId },

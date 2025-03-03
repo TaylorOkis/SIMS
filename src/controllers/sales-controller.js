@@ -90,6 +90,7 @@ const updateSale = async (req, res) => {
 
   const existingOrder = await db.order.findUnique({
     where: { id: orderId },
+    select: { salesPersonId: true, totalPrice: true },
   });
   if (!existingOrder) {
     throw new NotFoundError("Order not found");

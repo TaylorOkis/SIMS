@@ -21,6 +21,7 @@ const createProduct = async (req, res) => {
 
   const existingName = await db.product.findUnique({
     where: { name },
+    select: { name: true },
   });
   if (existingName) {
     throw new BadRequestError("Product already exists");
@@ -28,6 +29,7 @@ const createProduct = async (req, res) => {
 
   const existingSlug = await db.product.findUnique({
     where: { slug },
+    select: { slug: true },
   });
   if (existingSlug) {
     throw new BadRequestError("Slug already in use");
@@ -35,6 +37,7 @@ const createProduct = async (req, res) => {
 
   const existingSku = await db.product.findUnique({
     where: { sku },
+    select: { sku: true },
   });
   if (existingSku) {
     throw new BadRequestError("Sku already in use");
@@ -116,6 +119,7 @@ const updateProduct = async (req, res) => {
 
   const existingProduct = await db.product.findUnique({
     where: { id: productId },
+    select: { name: true, slug: true, sku: true },
   });
   if (!existingProduct) {
     throw new NotFoundError("Product not Found");
@@ -124,6 +128,7 @@ const updateProduct = async (req, res) => {
   if (name !== existingProduct.name) {
     const existingName = await db.product.findUnique({
       where: { name },
+      select: { name: true },
     });
     if (existingName) {
       throw new BadRequestError("Product already exists");
@@ -133,6 +138,7 @@ const updateProduct = async (req, res) => {
   if (slug !== existingProduct.slug) {
     const existingSlug = await db.product.findUnique({
       where: { slug },
+      select: { slug: true },
     });
     if (existingSlug) {
       throw new BadRequestError("Slug already in use");
@@ -142,6 +148,7 @@ const updateProduct = async (req, res) => {
   if (sku !== existingProduct.sku) {
     const existingSku = await db.product.findUnique({
       where: { sku },
+      select: { sku: true },
     });
     if (existingSku) {
       throw new BadRequestError("Sku already in use");
@@ -177,6 +184,7 @@ const deleteProduct = async (req, res) => {
 
   const existingProduct = await db.product.findUnique({
     where: { id: productId },
+    select: { id: true },
   });
   if (!existingProduct) {
     throw new NotFoundError("Product not Found");

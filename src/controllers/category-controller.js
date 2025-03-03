@@ -8,6 +8,7 @@ const createCategory = async (req, res) => {
 
   const existingName = await db.category.findUnique({
     where: { name },
+    select: { name: true },
   });
   if (existingName) {
     throw new BadRequestError("Category already exists");
@@ -15,6 +16,7 @@ const createCategory = async (req, res) => {
 
   const existingSlug = await db.category.findUnique({
     where: { slug },
+    select: { slug: true },
   });
   if (existingSlug) {
     throw new BadRequestError("Slug already in use");
@@ -77,6 +79,7 @@ const updateCategory = async (req, res) => {
 
   const existingName = await db.category.findUnique({
     where: { name },
+    select: { name: true },
   });
   if (existingName) {
     throw new BadRequestError("Name already in use");
@@ -84,6 +87,7 @@ const updateCategory = async (req, res) => {
 
   const existingSlug = await db.category.findUnique({
     where: { slug },
+    select: { slug: true },
   });
   if (existingSlug) {
     throw new BadRequestError("Slug already in use");
@@ -106,6 +110,7 @@ const deleteCategory = async (req, res) => {
 
   const existingCategory = await db.category.findUnique({
     where: { id: categoryId },
+    select: { id: true },
   });
   if (!existingCategory) {
     throw new NotFoundError("Category not Found");

@@ -19,6 +19,7 @@ import notFound from "./middlewares/not-found.js";
 import errorHandler from "./middlewares/error-handler.js";
 
 dotenv.config();
+require("./utils/cron_jobs/token-cleanup.js");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
