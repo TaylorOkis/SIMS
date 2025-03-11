@@ -68,7 +68,7 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   const products = await db.product.findMany({
-    take: Number(req.query.limit),
+    take: Number(req.query.limit) ?? 15,
     skip: paginate(req.query.page, req.query.limit),
     orderBy: {
       createdAt: "desc",
@@ -199,10 +199,31 @@ const deleteProduct = async (req, res) => {
   });
 };
 
+const searchProduct = async (req, res) => {
+  const { q } = req.query;
+  const list = await prisma.product.findMany({
+    where: {
+      name: { search: q },
+    },
+    omit: {
+      items: true,
+    },
+    take: Number(req.query.limit) ?? 15,
+    skip: paginate(req.query.page, req.query.limit),
+  });
+
+  if (!list) {
+    throw new BadRequestError("Product not found");
+  }
+
+  res.status(StatusCodes.OK).json({ status: "success", data: list });
+};
+
 export {
   getAllProducts,
   createProduct,
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  searchProduct,
 };

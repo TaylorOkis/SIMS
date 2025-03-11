@@ -5,6 +5,7 @@ import {
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  searchProduct,
 } from "../controllers/product-controller.js";
 import {
   authenticateUser,
@@ -22,5 +23,6 @@ productRouter
   .get(authenticateUser, getSingleProduct)
   .patch(authenticateUser, authorizePermissions("ADMIN"), updateProduct)
   .delete(authenticateUser, authorizePermissions("ADMIN"), deleteProduct);
+productRouter.route("/search").get(authenticateUser, searchProduct);
 
 export default productRouter;
