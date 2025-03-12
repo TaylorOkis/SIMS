@@ -4,6 +4,7 @@ import {
   deleteUser,
   getAllUsers,
   getSingleUser,
+  initialAdminSetup,
   updateUser,
   updateUserPassword,
 } from "../controllers/user-controller.js";
@@ -17,6 +18,8 @@ const userRouter = express.Router();
 userRouter
   .route("/updatePassword/:id")
   .patch(authenticateUser, updateUserPassword);
+
+userRouter.route("/setup").post(initialAdminSetup);
 
 userRouter
   .route("/")

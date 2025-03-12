@@ -18,11 +18,11 @@ productRouter
   .route("/")
   .get(authenticateUser, getAllProducts)
   .post(authenticateUser, authorizePermissions("ADMIN"), createProduct);
+productRouter.route("/search").get(authenticateUser, searchProduct);
 productRouter
   .route("/:id")
   .get(authenticateUser, getSingleProduct)
   .patch(authenticateUser, authorizePermissions("ADMIN"), updateProduct)
   .delete(authenticateUser, authorizePermissions("ADMIN"), deleteProduct);
-productRouter.route("/search").get(authenticateUser, searchProduct);
 
 export default productRouter;

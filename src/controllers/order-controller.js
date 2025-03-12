@@ -7,8 +7,8 @@ const createOrder = async (req, res) => {
   const { customerName, customerContact, salesPersonId, itemIds, status } =
     req.body;
 
-  let totalPrice = 0;
   if (itemIds) {
+    let totalPrice = 0;
     for (const itemId in itemIds) {
       const existingItem = await db.item.findUnique({
         where: { id: itemId },
@@ -41,7 +41,7 @@ const createOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   const orders = await db.order.findMany({
-    take: Number(req.query.limit),
+    take: Number(req.query.limit) || 15,
     skip: paginate(req.query.page, req.query.limit),
     orderBy: {
       createdAt: "desc",
@@ -72,6 +72,8 @@ const getAllSalesPersonOrders = async (req, res) => {
     where: { salesPersonId },
     orderBy: { createdAt: "desc" },
     include: { items: true },
+    take: Number(req.query.limit) || 15,
+    skip: paginate(req.query.page, req.query.limit),
   });
 
   res.status(StatusCodes.OK).json({

@@ -1,9 +1,79 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcryptjs";
-import BadRequestError from "../utils/errors/bad-request.js";
-import NotFoundError from "../utils/errors/not-found.js";
+import { BadRequestError, NotFoundError } from "../utils/errors/index.js";
 import paginate from "../utils/pagination.js";
+
+const initialAdminSetup = async (req, res) => {
+  const existingAdmin = await db.user.findFirst({
+    where: { role: "ADMIN" },
+    select: { id: true },
+  });
+  if (existingAdmin) {
+    throw new BadRequestError("An admin account already exists");
+  }
+  const {
+    username,
+    firstname,
+    lastname,
+    password,
+    email,
+    phone,
+    status,
+    gender,
+    DOB,
+    address,
+    image,
+  } = req.body;
+
+  const existingUsername = await db.user.findUnique({
+    where: { username },
+  });
+  if (existingUsername) {
+    throw new BadRequestError("Username already exists");
+  }
+
+  const existingEmail = await db.user.findUnique({
+    where: { email },
+  });
+  if (existingEmail) {
+    throw new BadRequestError("Email already in use");
+  }
+
+  if (phone) {
+    const existingPhone = await db.user.findUnique({
+      where: { phone },
+    });
+    if (existingPhone) {
+      throw new BadRequestError("Phone number already in use");
+    }
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await db.user.create({
+    data: {
+      username,
+      firstname,
+      lastname,
+      password: hashedPassword,
+      email,
+      phone,
+      role: "ADMIN",
+      status,
+      gender,
+      DOB,
+      address,
+      image,
+    },
+  });
+
+  res.status(StatusCodes.CREATED).json({
+    status: "success",
+    data: user,
+    error: null,
+  });
+};
 
 const createUser = async (req, res) => {
   const {
@@ -72,7 +142,7 @@ const createUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   const users = await db.user.findMany({
-    take: Number(req.query.limit),
+    take: Number(req.query.limit) || 15,
     skip: paginate(req.query.page, req.query.limit),
     orderBy: {
       createdAt: "desc",
@@ -230,4 +300,5 @@ export {
   updateUser,
   deleteUser,
   updateUserPassword,
+  initialAdminSetup,
 };

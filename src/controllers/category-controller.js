@@ -1,7 +1,6 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
-import BadRequestError from "../utils/errors/bad-request.js";
-import NotFoundError from "../utils/errors/not-found.js";
+import { BadRequestError, NotFoundError } from "../utils/errors/index.js";
 
 const createCategory = async (req, res) => {
   const { name, slug } = req.body;

@@ -1,7 +1,6 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
-import NotFoundError from "../utils/errors/not-found.js";
-import BadRequestError from "../utils/errors/bad-request.js";
+import { BadRequestError, NotFoundError } from "../utils/errors/index.js";
 import paginate from "../utils/pagination.js";
 
 const createItem = async (req, res) => {
@@ -40,9 +39,7 @@ const createItem = async (req, res) => {
     });
 
     if (!existingOrder) {
-      res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ status: "fail", data: null, error: "Order does not exist" });
+      throw new NotFoundError("Order does not exist");
       return;
     }
 

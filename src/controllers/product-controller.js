@@ -1,7 +1,6 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
-import BadRequestError from "../utils/errors/bad-request.js";
-import NotFoundError from "../utils/errors/not-found.js";
+import { BadRequestError, NotFoundError } from "../utils/errors/index.js";
 import paginate from "../utils/pagination.js";
 
 const createProduct = async (req, res) => {
@@ -68,7 +67,7 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   const products = await db.product.findMany({
-    take: Number(req.query.limit) ?? 15,
+    take: Number(req.query.limit) || 15,
     skip: paginate(req.query.page, req.query.limit),
     orderBy: {
       createdAt: "desc",
@@ -201,19 +200,37 @@ const deleteProduct = async (req, res) => {
 
 const searchProduct = async (req, res) => {
   const { q } = req.query;
-  const list = await prisma.product.findMany({
+
+  if (!q) {
+    throw new BadRequestError("Search query is required");
+  }
+
+  const list = await db.product.findMany({
     where: {
-      name: { search: q },
+      name: { contains: q, mode: "insensitive" },
     },
-    omit: {
-      items: true,
+    select: {
+      id: true,
+      name: true,
+      stockQty: true,
+      sellingPrice: true,
+      slug: true,
+      sku: true,
+      image: true,
+      categoryId: true,
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
     },
-    take: Number(req.query.limit) ?? 15,
+    take: Number(req.query.limit) || 15,
     skip: paginate(req.query.page, req.query.limit),
   });
 
-  if (!list) {
-    throw new BadRequestError("Product not found");
+  if (list.length === 0) {
+    throw new NotFoundError("Product not found");
   }
 
   res.status(StatusCodes.OK).json({ status: "success", data: list });

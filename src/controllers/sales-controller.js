@@ -1,6 +1,6 @@
 import db from "../database/db.js";
 import { StatusCodes } from "http-status-codes";
-import NotFoundError from "../utils/errors/not-found.js";
+import { NotFoundError } from "../utils/errors/index.js";
 import paginate from "../utils/pagination.js";
 
 const createSale = async (req, res) => {
@@ -34,7 +34,7 @@ const createSale = async (req, res) => {
 
 const getAllSales = async (req, res) => {
   const sales = await db.sale.findMany({
-    take: Number(req.query.limit),
+    take: Number(req.query.limit) || 15,
     skip: paginate(req.query.page, req.query.limit),
     orderBy: { createdAt: "desc" },
   });
@@ -56,7 +56,7 @@ const getAllSalesPersonSales = async (req, res) => {
 
   const sales = await db.sale.findMany({
     where: { salesPersonId },
-    take: Number(req.query.limit),
+    take: Number(req.query.limit) || 15,
     skip: paginate(req.query.page, req.query.limit),
     orderBy: { createdAt: "desc" },
   });
@@ -116,7 +116,7 @@ const updateSale = async (req, res) => {
     .json({ status: "success", data: sale, error: null });
 };
 
-// TODO: Write code for deleting sale (only application for ADMIN)
+// TODO: Write code for deleting sale (only applicable for ADMIN)
 const deleteSale = async (req, res) => {};
 
 export {

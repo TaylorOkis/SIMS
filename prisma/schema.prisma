@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,30 +7,103 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id                String      @id @default(uuid())
-  username          String      @unique
-  firstname         String
-  lastname          String
-  password          String
-  resetToken        String?
-  resetTokenExpiry  DateTime?
-  email             String      @unique  
-  phone             String?     @unique
-  role              Role    
-  status            UserStatus  @default(ACTIVE)  
-  gender            Gender
-  DOB               DateTime?
-  address           String?
-  image             String      @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-
-  Sale Sale[]
-  Order Order[]
+  id               String     @id @default(uuid())
+  username         String     @unique
+  firstname        String
+  lastname         String
+  email            String     @unique
+  phone            String?    @unique
+  role             Role
+  status           UserStatus @default(ACTIVE)
+  gender           Gender
+  DOB              DateTime?
+  address          String?
+  image            String     @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  password         String
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  Order            Order[]
+  Sale             Sale[]
 
   @@index([username, email, phone, role])
+}
+
+model Product {
+  id               String   @id @default(uuid())
+  name             String   @unique
+  description      String?
+  alertQty         Int
+  stockQty         Int
+  buyingPrice      Float
+  sellingPrice     Float
+  slug             String   @unique
+  sku              String   @unique
+  supplier_name    String
+  supplier_contact String
+  categoryId       String
+  image            String   @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  Item             Item[]
+  category         Category @relation(fields: [categoryId], references: [id])
+
+  @@index([name, stockQty, sellingPrice])
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  product   Product[]
+}
+
+model Sale {
+  id            String        @id @default(uuid())
+  dateOfSale    DateTime      @default(now())
+  totalAmount   Float
+  salesPersonId String
+  orderId       String
+  status        SaleStatus
+  paymentMethod PaymentMethod
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  order         Order         @relation(fields: [orderId], references: [id])
+  salesPerson   User          @relation(fields: [salesPersonId], references: [id])
+
+  @@index([salesPersonId, status])
+}
+
+model Order {
+  id              String     @id @default(uuid())
+  customerName    String?
+  customerContact String?
+  salesPersonId   String
+  totalPrice      Float
+  status          SaleStatus
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  items           Item[]
+  salesPerson     User       @relation(fields: [salesPersonId], references: [id])
+  Sale            Sale[]
+
+  @@index([salesPersonId, status])
+}
+
+model Item {
+  id          String  @id @default(uuid())
+  productId   String
+  quantity    Int
+  total_price Float
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id])
+  product     Product @relation(fields: [productId], references: [id])
+
+  @@index([quantity, productId])
 }
 
 enum Role {
@@ -49,56 +121,6 @@ enum UserStatus {
   INACTIVE
 }
 
-model Product {
-  id                String    @id @default(uuid())
-  name              String    @unique
-  description       String?
-  alertQty          Int
-  stockQty          Int
-  buyingPrice       Float
-  sellingPrice      Float
-  slug              String    @unique
-  sku               String    @unique
-  supplier_name     String
-  supplier_contact  String
-  categoryId        String
-  image             String    @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  category          Category  @relation(fields: [categoryId], references: [id])
-  Item Item[]
-
-  @@index([name, stockQty, sellingPrice])
-}
-
-model Category {
-  id         String   @id @default(uuid())
-  name       String   @unique
-  slug       String   @unique
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  product Product[]
-}
-
-model Sale {
-  id             String    @id @default(uuid())
-  dateOfSale     DateTime  @default(now())
-  totalAmount    Float
-  salesPersonId  String
-  orderId        String   
-  status         SaleStatus
-  paymentMethod  PaymentMethod
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  salesPerson    User      @relation(fields: [salesPersonId], references: [id])
-  order          Order     @relation(fields: [orderId], references: [id])
-
-  @@index([salesPersonId, status])
-}
-
 enum SaleStatus {
   PENDING
   PROCESSING
@@ -111,34 +133,4 @@ enum PaymentMethod {
   CASH
   CARD
   TRANSFER
-}
-
-model Order {
-  id              String    @id @default(uuid())
-  customerName    String?
-  customerContact String?
-  salesPersonId   String
-  totalPrice      Float
-  status          SaleStatus
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  Sale  Sale[]
-  items Item[]
-
-  salesPerson     User      @relation(fields: [salesPersonId], references: [id])
-  @@index([salesPersonId, status])
-}
-
-model Item {
-  id           String  @id @default(uuid())
-  productId    String
-  quantity     Int
-  total_price  Float
-  orderId      String
-
-  order        Order   @relation(fields: [orderId], references: [id])
-  product      Product @relation(fields: [productId], references: [id])
-
-  @@index([quantity, productId])
 }
