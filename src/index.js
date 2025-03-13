@@ -15,9 +15,11 @@ import itemRouter from "./routes/item-router.js";
 import orderRouter from "./routes/order-router.js";
 import saleRouter from "./routes/sale-router.js";
 import authRouter from "./routes/auth-router.js";
+import notificationRouter from "./routes/notification-router.js";
 import notFound from "./middlewares/not-found.js";
 import errorHandler from "./middlewares/error-handler.js";
 import "./utils/cron_jobs/token-cleanup.js";
+import "./utils/cron_jobs/low-stock-scheduler.js";
 
 dotenv.config();
 const app = express();
@@ -50,6 +52,7 @@ app.use("/products", productRouter);
 app.use("/items", itemRouter);
 app.use("/orders", orderRouter);
 app.use("/sales", saleRouter);
+app.use("/notifications", notificationRouter);
 app.use(notFound);
 app.use(errorHandler);
 
