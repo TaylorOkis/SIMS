@@ -71,25 +71,30 @@ const updateCategory = async (req, res) => {
 
   const existingCategory = await db.category.findUnique({
     where: { id: categoryId },
+    select: { id: true, name: true, slug: true },
   });
   if (!existingCategory) {
     throw new NotFoundError("Category not Found");
   }
 
-  const existingName = await db.category.findUnique({
-    where: { name },
-    select: { name: true },
-  });
-  if (existingName) {
-    throw new BadRequestError("Name already in use");
+  if (name !== existingCategory.name) {
+    const existingName = await db.category.findUnique({
+      where: { name },
+      select: { name: true },
+    });
+    if (existingName) {
+      throw new BadRequestError("Name already in use");
+    }
   }
 
-  const existingSlug = await db.category.findUnique({
-    where: { slug },
-    select: { slug: true },
-  });
-  if (existingSlug) {
-    throw new BadRequestError("Slug already in use");
+  if (slug !== existingCategory.slug) {
+    const existingSlug = await db.category.findUnique({
+      where: { slug },
+      select: { slug: true },
+    });
+    if (existingSlug) {
+      throw new BadRequestError("Slug already in use");
+    }
   }
 
   const updateCategory = await db.category.update({
@@ -113,6 +118,17 @@ const deleteCategory = async (req, res) => {
   });
   if (!existingCategory) {
     throw new NotFoundError("Category not Found");
+  }
+
+  const existingProductWithCategory = await db.product.findFirst({
+    where: { categoryId },
+    select: { id: true },
+  });
+
+  if (existingProductWithCategory) {
+    throw new BadRequestError(
+      "A product is part of this category. Category cannot be deleted"
+    );
   }
 
   await db.category.delete({

@@ -193,28 +193,36 @@ const updateUser = async (req, res) => {
 
   const existingUser = await db.user.findUnique({
     where: { id: userId },
+    select: { username: true, email: true, phone: true },
   });
   if (!existingUser) {
     throw new NotFoundError("User not Found");
   }
 
-  const existingUsername = await db.user.findUnique({
-    where: { username },
-  });
-  if (existingUsername) {
-    throw new BadRequestError("Username already exists");
+  if (username !== existingUser.username) {
+    const existingUsername = await db.user.findUnique({
+      where: { username },
+      select: { username: true },
+    });
+    if (existingUsername) {
+      throw new BadRequestError("Username already exists");
+    }
   }
 
-  const existingEmail = await db.user.findUnique({
-    where: { email },
-  });
-  if (existingEmail) {
-    throw new BadRequestError("Email already in use");
+  if (email !== existingUser.email) {
+    const existingEmail = await db.user.findUnique({
+      where: { email },
+      select: { email: true },
+    });
+    if (existingEmail) {
+      throw new BadRequestError("Email already in use");
+    }
   }
 
-  if (phone) {
+  if (phone && phone !== existingUser.phone) {
     const existingPhone = await db.user.findUnique({
       where: { phone },
+      select: { phone: true },
     });
     if (existingPhone) {
       throw new BadRequestError("Phone number already in use");
