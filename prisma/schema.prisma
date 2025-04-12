@@ -10,19 +10,16 @@ datasource db {
 model User {
   id               String     @id @default(uuid())
   username         String     @unique
+  password         String
   firstname        String
   lastname         String
   email            String     @unique
   phone            String?    @unique
   role             Role
   status           UserStatus @default(ACTIVE)
-  gender           Gender
-  DOB              DateTime?
-  address          String?
   image            String     @default("https://img.icons8.com/?size=100&id=53386&format=png&color=000000")
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
-  password         String
   resetToken       String?
   resetTokenExpiry DateTime?
   Order            Order[]
