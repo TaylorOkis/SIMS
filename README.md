@@ -1,4 +1,3 @@
-```markdown
 # SIMS (Simple Inventory Management System)
 
 ## Table of Contents
@@ -103,8 +102,8 @@
 ---
 
 ## Architecture & Project Structure
-```
 
+```Relevant folder structure
 SIMS/
 ├── prisma/
 │ └── schema.prisma
@@ -143,8 +142,7 @@ SIMS/
 ├── package.json
 ├── package-lock.json
 └── TODO
-
-````
+```
 
 - **`prisma/schema.prisma`**: Defines the PostgreSQL schema and Prisma models.
 - **`src/database/db.js`**: Initializes and exports a singleton Prisma Client.
@@ -259,7 +257,7 @@ enum Role          { ADMIN SALESPERSON }
 enum UserStatus    { ACTIVE INACTIVE }
 enum SaleStatus    { PENDING PROCESSING COMPLETED CANCELLED REFUNDED }
 enum PaymentMethod { CASH CARD TRANSFER }
-````
+```
 
 - **Indexes**:
 
