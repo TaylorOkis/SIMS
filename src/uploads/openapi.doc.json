@@ -14,7 +14,6 @@
   "paths": {
     "/": {
       "get": {
-        "tags": ["User"],
         "summary": "Initial Test",
         "description": "This request is used to verify that the SIMS API is online and operational. It serves as a simple health-check endpoint.",
         "operationId": "get",
@@ -167,9 +166,7 @@
             }
           }
         }
-      }
-    },
-    "/users": {
+      },
       "post": {
         "tags": ["User"],
         "summary": "Create User",
