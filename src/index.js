@@ -7,6 +7,10 @@ import { rateLimit } from "express-rate-limit";
 import xss from "xss";
 import helmet from "helmet";
 import "express-async-errors";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import userRouter from "./routes/user-router.js";
 import categoryRouter from "./routes/category-router.js";
@@ -24,6 +28,11 @@ import "./utils/cron_jobs/low-stock-scheduler.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const filePath = path.join(__dirname, "uploads", "openapi.doc.json");
+const swaggerDocument = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
 app.set("trust proxy", 1);
 
@@ -49,6 +58,8 @@ app.use(cookieParser(process.env.JWT_SECRET));
 app.get("/", (req, res) => {
   res.send("App is running perfectly");
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
