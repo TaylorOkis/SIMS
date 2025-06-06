@@ -68,9 +68,11 @@ const initialAdminSetup = async (req, res) => {
     },
   });
 
+  const { password: savedPassword, ...User } = user;
+
   res.status(StatusCodes.CREATED).json({
     status: "success",
-    data: user,
+    data: User,
     error: null,
   });
 };
@@ -147,6 +149,9 @@ const getAllUsers = async (req, res) => {
     orderBy: {
       createdAt: "desc",
     },
+    omit: {
+      password: true,
+    },
   });
 
   res.status(StatusCodes.OK).json({
@@ -162,6 +167,7 @@ const getSingleUser = async (req, res) => {
 
   const existingUser = await db.user.findUnique({
     where: { id: userId },
+    omit: { password: true },
   });
 
   if (!existingUser) {
@@ -246,9 +252,11 @@ const updateUser = async (req, res) => {
     },
   });
 
+  const { password: savedPassword, ...User } = updateUser;
+
   res.status(StatusCodes.OK).json({
     status: "success",
-    data: updateUser,
+    data: User,
     error: null,
   });
 };
