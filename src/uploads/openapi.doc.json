@@ -1,0 +1,1211 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SIMS Production",
+    "description": "Welcome to the SIMS Production API documentation. This API supports a complete Sales and Inventory Management System (SIMS) including user management, category and product management, orders, items, sales, and authentication. The API is deployed on Render and available at:\n\n**Base URL:**  \n`https://sims-mup1.onrender.com/`\n\n## Collection Overview\n\n**SIMS Production**\n\nThis collection contains endpoints for all major resources in the system. The endpoints are grouped into folders for Users, Categories, Products, Orders, Items, Sales, and Authentication. Each endpoint includes a description, HTTP method, URL, request body examples (where applicable), and query parameters.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "servers": [
+    {
+      "url": "https://sims-mup1.onrender.com"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Initial Test",
+        "description": "This request is used to verify that the SIMS API is online and operational. It serves as a simple health-check endpoint.",
+        "operationId": "get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get All Users",
+        "description": "Retrieves a complete list of all users registered in the system. Use this endpoint to manage or view user accounts in bulk.",
+        "operationId": "getusers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/83c48807-f07e-4d15-9a7f-3f72d18c1e3a": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get Single User",
+        "description": "Fetches detailed information about a specific user. Replace `{userId}` with the actual unique identifier (UUID) of the user.",
+        "operationId": "getusers83c48807f07e4d159a7f3f72d18c1e3a",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update User",
+        "description": "Updates an existing user's details, such as personal information and account status. Replace `{userId}` with the user’s unique ID.",
+        "operationId": "patchusers83c48807f07e4d159a7f3f72d18c1e3a",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "username": "sales-1",
+                  "firstname": "sales",
+                  "lastname": "person",
+                  "password": "salesperson",
+                  "email": "dabataylor2@gmail.com",
+                  "phone": "+9012345678",
+                  "role": "SALESPERSON",
+                  "status": "INACTIVE",
+                  "gender": "FEMALE"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Create User",
+        "description": "Creates a new user account. This request requires unique values for username, email, and phone. It is typically used for onboarding new users such as salespersons.",
+        "operationId": "postusers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "username": "salesperson",
+                  "firstname": "sales",
+                  "lastname": "person",
+                  "password": "salesperson",
+                  "email": "dabataylor2@gmail.com",
+                  "phone": "+9012345678",
+                  "role": "SALESPERSON",
+                  "gender": "FEMALE"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "5000/users/20b08ce8-5c7c-4d7b-97f0-58f765248464": {
+      "delete": {
+        "tags": ["User"],
+        "summary": "Delete User",
+        "description": "Deletes the user account identified by the provided user ID. This action is irreversible.",
+        "operationId": "delete5000users20b08ce85c7c4d7b97f058f765248464",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/updatePassword/07a40092-3cfb-4e20-b3ca-ef200e2dd02f": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update User Password",
+        "description": "Updates the user's password by requiring the current password and the new desired password. Replace `{userId}` with the actual user ID.",
+        "operationId": "patchusersupdatePassword07a400923cfb4e20b3caef200e2dd02f",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "oldPassword": "123456",
+                  "newPassword": "1234"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/setup": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Setup Admin account",
+        "description": "Sets up the initial admin account. This endpoint is intended for one-time use during initial system configuration and will return an error if an admin account already exists.",
+        "operationId": "postuserssetup",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "username": "admin",
+                  "firstname": "admin",
+                  "lastname": "main",
+                  "password": "admin",
+                  "email": "wztaylor.t@gmail.com",
+                  "phone": "+9087654321"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get All Categories",
+        "description": "Retrieves all product categories available in the system. This helps in organizing and filtering products.",
+        "operationId": "getcategories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Category"],
+        "summary": "Create Category",
+        "description": "Adds a new product category. The request should include a unique name and a URL-friendly slug",
+        "operationId": "postcategories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Groceries",
+                  "slug": "groceries"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/7c5e2c7e-c766-4fd0-a542-78e9b3d6ab77": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get Single Category",
+        "description": "Retrieves details for a specific category by its unique identifier. Replace `{categoryId}` with the category's ID.",
+        "operationId": "getcategories7c5e2c7ec7664fd0a54278e9b3d6ab77",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/07b3a86f-4ef8-4cde-98ea-560b16e2dc7a": {
+      "patch": {
+        "tags": ["Category"],
+        "summary": "Update Category",
+        "description": "Updates category details, such as its name and slug. Replace `{categoryId}` with the actual category ID.",
+        "operationId": "patchcategories07b3a86f4ef84cde98ea560b16e2dc7a",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Testing",
+                  "slug": "testing"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Category"],
+        "summary": "Delete Category",
+        "description": "Deletes the specified category. Ensure that no products are associated with the category before deleting it.",
+        "operationId": "deletecategories07b3a86f4ef84cde98ea560b16e2dc7a",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get All Products",
+        "description": "Retrieves a list of all products currently in the inventory.",
+        "operationId": "getproducts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Product"],
+        "summary": "Create Product",
+        "description": "Creates a new product record. Provide details including product name, description, pricing, stock quantity, and the category ID it belongs to.",
+        "operationId": "postproducts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "LG 27GN950-B",
+                  "description": "27-inch 4K UHD Nano IPS Gaming Monitor, 144Hz",
+                  "alertQty": 2,
+                  "stockQty": 10,
+                  "buyingPrice": 350000,
+                  "sellingPrice": 400000,
+                  "slug": "lg-27gn950-b",
+                  "sku": "LG27GN950B",
+                  "supplier_name": "LG",
+                  "supplier_contact": "+229448888",
+                  "categoryId": "5ddb046a-95e1-4b8d-aaf3-2f5eac1aebdb"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/732a1033-fc40-4d23-9f9a-60b37067e14f": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get Single Product",
+        "description": "Retrieves detailed information for a specific product by its unique ID. Replace `{productId}` with the product's ID.",
+        "operationId": "getproducts732a1033fc404d239f9a60b37067e14f",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Product"],
+        "summary": "Update Product",
+        "description": "Updates the details of an existing product. This can include changing the product name, pricing, stock, or supplier details.",
+        "operationId": "patchproducts732a1033fc404d239f9a60b37067e14f",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "test2",
+                  "description": "This is test two",
+                  "alertQty": 5,
+                  "stockQty": 50,
+                  "buyingPrice": 1500,
+                  "sellingPrice": 1750,
+                  "slug": "test-slug-2",
+                  "sku": "test-2",
+                  "supplier_name": "supplier-test",
+                  "supplier_contact": "supplier-contact",
+                  "categoryId": "7797c661-7033-4e28-a3fd-36e65004356f"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/463b23b2-472e-4d63-8a99-13e432374905": {
+      "delete": {
+        "tags": ["Product"],
+        "summary": "Delete Product",
+        "description": "Deletes a product from the inventory. This operation permanently removes the product data.",
+        "operationId": "deleteproducts463b23b2472e4d638a9913e432374905",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/search": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Search Product",
+        "description": "Searches for products based on the provided query string. Useful for quickly locating products in the inventory.",
+        "operationId": "getproductssearch",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "x"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": ["Order"],
+        "summary": "Create Order",
+        "description": "Creates a new order by capturing customer details, the assigned salesperson, and order status.",
+        "operationId": "postorders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "customerName": "JOY",
+                  "customerContact": "+2434754",
+                  "salesPersonId": "07a40092-3cfb-4e20-b3ca-ef200e2dd02f",
+                  "status": "COMPLETED"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get All Orders",
+        "description": "Retrieves all orders placed within the system.",
+        "operationId": "getorders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/3d06f975-4ffa-434c-a77a-b213b28c111d": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get Single Order",
+        "description": "Retrieves detailed information about a specific order. Replace `{orderId}` with the unique order ID.",
+        "operationId": "getorders3d06f9754ffa434ca77ab213b28c111d",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/9b13e714-ad35-4159-99bc-4ce3bd773ef8": {
+      "delete": {
+        "tags": ["Order"],
+        "summary": "Delete Order",
+        "description": "Deletes an order from the system. This is typically used for removing test orders or erroneous entries.",
+        "operationId": "deleteorders9b13e714ad35415999bc4ce3bd773ef8",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/salesPersonOrders/f494aa37-f5f5-458d-9e6a-0b0ef9fb1cab": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get All SalesPerson Orders",
+        "description": "Retrieves all orders assigned to a particular salesperson. Replace `{salesPersonId}` with the actual salesperson’s unique ID.",
+        "operationId": "getorderssalesPersonOrdersf494aa37f5f5458d9e6a0b0ef9fb1cab",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/items/": {
+      "post": {
+        "tags": ["Item"],
+        "summary": "Create Item",
+        "description": "Creates a new order item, linking a product to an order along with the quantity ordered.",
+        "operationId": "postitems",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "productId": "535202a6-3bc1-4b21-81a8-257201b5e00b",
+                  "quantity": 5,
+                  "orderId": "cb1423bb-36f8-4a2a-80c5-caecc7dd30db"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Item"],
+        "summary": "Get All Items",
+        "description": "StartFragmentRetrieves a paginated list of order items. This helps manage large order datasets.EndFragment",
+        "operationId": "getitems",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "2"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/items/da93bb69-3d9a-4b61-b27d-f1178bad3afe": {
+      "patch": {
+        "tags": ["Item"],
+        "summary": "Update Item",
+        "description": "Updates details for an existing order item. Replace `{itemId}` with the unique identifier of the item.",
+        "operationId": "patchitemsda93bb693d9a4b61b27df1178bad3afe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "productId": "e38a3b11-e812-4a9c-8c41-2479bb586dec",
+                  "quantity": 3,
+                  "orderId": "cb1423bb-36f8-4a2a-80c5-caecc7dd30db"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/items/b8363068-944a-422b-bb11-4160ab0bcecc": {
+      "delete": {
+        "tags": ["Item"],
+        "summary": "Delete Item",
+        "description": "Deletes a specific order item identified by its unique ID.",
+        "operationId": "deleteitemsb8363068944a422bbb114160ab0bcecc",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales": {
+      "get": {
+        "tags": ["Sale"],
+        "summary": "Get All Sales",
+        "description": "Retrieves a paginated list of sales records. Adjust the query parameters to navigate through the dataset.",
+        "operationId": "getsales",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "2"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "2"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/": {
+      "post": {
+        "tags": ["Sale"],
+        "summary": "Create Sale",
+        "description": "Creates a new sale record. This endpoint finalizes an order into a completed sale.",
+        "operationId": "postsales",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "orderId": "3bdb4563-73bd-40ed-95b3-cd546eb7d9b9",
+                  "status": "COMPLETED",
+                  "paymentMethod": "TRANSFER"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/e3e67af0-9ece-4bda-9567-45b150a6fe5c": {
+      "get": {
+        "tags": ["Sale"],
+        "summary": "Get Single Sale",
+        "description": "Retrieves detailed information about a specific sale record. Replace `{saleId}` with the sale's unique ID.",
+        "operationId": "getsalese3e67af09ece4bda956745b150a6fe5c",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "5000/sales/e3e67af0-9ece-4bda-9567-45b150a6fe5c": {
+      "patch": {
+        "tags": ["Sale"],
+        "summary": "Update Sale",
+        "description": "Updates an existing sale record. Use this endpoint to modify details such as sale status.",
+        "operationId": "patch5000salese3e67af09ece4bda956745b150a6fe5c",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "orderId": "cb1423bb-36f8-4a2a-80c5-caecc7dd30db",
+                  "status": "COMPLETED"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/salesPersonSales/07a40092-3cfb-4e20-b3ca-ef200e2dd02f": {
+      "get": {
+        "tags": ["Sale"],
+        "summary": "Get All SalesPerson Sales",
+        "description": "Retrieves all sales records for a specific salesperson. Replace `{salesPersonId}` with the appropriate ID.",
+        "operationId": "getsalessalesPersonSales07a400923cfb4e20b3caef200e2dd02f",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login/": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login",
+        "description": "Authenticates a user with a username and password. On successful login, an access token is returned for subsequent requests.",
+        "operationId": "postauthlogin",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "username": "admin",
+                  "password": "admin"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgotPassword": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Forgot Password",
+        "description": "Initiates the password reset process by sending a reset token to the user's email.",
+        "operationId": "postauthforgotPassword",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "dabataylor2@gmail.com"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verifyResetToken": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Verify Reset Token",
+        "description": "Verifies that the reset token provided is valid for the specified email. This is a pre-requisite for changing the password.",
+        "operationId": "getauthverifyResetToken",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Log Out",
+        "description": "Logs out the currently authenticated user by invalidating the session token.",
+        "operationId": "getauthlogout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/changePassword": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Change Password",
+        "description": "Changes the user's password using a valid reset token. This completes the password reset flow.",
+        "operationId": "postauthchangePassword",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "dabataylor2@gmail.com",
+                  "resetToken": "294433",
+                  "newPassword": "test"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/route/test": {
+      "get": {
+        "summary": "Route not Found",
+        "description": "This request is designed to trigger the API’s error handling for undefined routes. It confirms that the system properly handles requests to non-existent endpoints.",
+        "operationId": "getroutetest",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "digestAuth": {
+        "type": "http",
+        "scheme": "digest"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "This folder contains endpoints related to user management. It covers creating, retrieving, updating, and deleting user accounts as well as password management and initial admin setup. Use these endpoints to manage all user-related operations in the system."
+    },
+    {
+      "name": "Category",
+      "description": "Endpoints in this folder handle product categories. Categories help organize products and facilitate filtering. You can create new categories, update existing ones, or delete categories (ensuring no products are linked to them)."
+    },
+    {
+      "name": "Product",
+      "description": "This folder includes endpoints for managing the product inventory. You can add new products, update product details, retrieve lists or individual products, and perform search operations."
+    },
+    {
+      "name": "Order",
+      "description": "Endpoints in the Order folder allow you to create, view, and delete orders. Orders capture customer details, the salesperson handling the order, and the order status."
+    },
+    {
+      "name": "Item",
+      "description": "Items represent individual product entries within an order. Use these endpoints to create, update, retrieve, or delete items for each order."
+    },
+    {
+      "name": "Sale",
+      "description": "The Sale folder contains endpoints to manage sales records. You can create new sales, view sales (with pagination), update sales, and filter sales by salesperson."
+    },
+    {
+      "name": "Authentication",
+      "description": "This folder provides endpoints for user authentication. It includes endpoints for login, initiating and verifying password resets, changing passwords, and logging out."
+    }
+  ]
+}
